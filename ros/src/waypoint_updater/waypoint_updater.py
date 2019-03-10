@@ -28,6 +28,12 @@ LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this n
 
 class WaypointUpdater(object):
     def __init__(self):
+        # TODO: Add other member variables you need below
+        self.pose = None
+        self.base_waypoints = None
+        self.waypoints_2d = None
+        self.waypoint_tree = None
+
         rospy.init_node('waypoint_updater')
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
@@ -37,12 +43,6 @@ class WaypointUpdater(object):
 
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
-
-        # TODO: Add other member variables you need below
-        self.pose = None
-        self.base_waypoints = None
-        self.waypoints_2d = None
-        self.waypoint_tree = None
 
         # rospy.spin()
         self.loop() # control the publish rate at 50Hz
@@ -60,7 +60,7 @@ class WaypointUpdater(object):
     def get_closest_waypoint_idx(self):
 
         x = self.pose.pose.position.y
-        y = self.post.pose.position.x
+        y = self.pose.pose.position.x
 
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
 
@@ -79,12 +79,19 @@ class WaypointUpdater(object):
 
         return closest_idx
 
+    def publish_waypoints(self, closest_waypoint_idx):
+        lane = Lane()
+        lane.header = self.base_waypoints.header
+        lane.waypoints = self.base_waypoints.waypoints[closest_waypoint_idx : closest_waypoint_idx + LOOKAHEAD_WPS]
+        self.final_waypoints_pub.publish(lane)
+
     def pose_cb(self, msg):
         # TODO: Implement
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
+        rospy.loginfo('waypoints_cb')
         self.base_waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
