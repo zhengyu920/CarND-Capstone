@@ -7,4 +7,6 @@ profile.tmp
 
 .idea/
 
+# dbw testing
 data/dbw_test.rosbag.bag
+ros/src/twist_controller/*.csv
