@@ -8,7 +8,9 @@ ONE_MPH = 0.44704
 MIN_SPEED = 0.1
 
 class Controller(object):
-    def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit, accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
+    def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit,
+                 accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle):
+
         self.yaw_controller = YawController(wheel_base, steer_ratio, MIN_SPEED, max_lat_accel, max_steer_angle)
 
         kp = 0.3
@@ -67,5 +69,9 @@ class Controller(object):
             throttle = 0
             decel = max(vel_error, self.decel_limit)
             brake = abs(decel) * self.vehicle_mass * self.wheel_radius  # Torque N*m
+
+        rospy.logwarn("throttle cmd: {0}".format(throttle))
+        rospy.logwarn("brake cmd: {0}".format(brake))
+        rospy.logwarn("steering cmd: {0}".format(steering))
 
         return throttle, brake, steering

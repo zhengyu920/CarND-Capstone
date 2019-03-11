@@ -45,7 +45,7 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # rospy.spin()
-        self.loop() # control the publish rate at 50Hz
+        self.loop()  # control the publish rate at 50Hz
 
     # replace rospy.spin()
     def loop(self):
@@ -83,6 +83,7 @@ class WaypointUpdater(object):
         lane = Lane()
         lane.header = self.base_waypoints.header
         lane.waypoints = self.base_waypoints.waypoints[closest_waypoint_idx : closest_waypoint_idx + LOOKAHEAD_WPS]
+        # rospy.logwarn(lane)
         self.final_waypoints_pub.publish(lane)
 
     def pose_cb(self, msg):
