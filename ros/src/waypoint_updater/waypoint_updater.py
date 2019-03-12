@@ -28,13 +28,13 @@ LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this 
 
 class WaypointUpdater(object):
     def __init__(self):
+        rospy.init_node('waypoint_updater')
+
         # TODO: Add other member variables you need below
         self.pose = None
         self.base_waypoints = None
         self.waypoints_2d = None
         self.waypoint_tree = None
-
-        rospy.init_node('waypoint_updater')
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -54,9 +54,9 @@ class WaypointUpdater(object):
                 # Get closest waypoint
                 closest_waypoint_idx = self.get_closest_waypoint_idx()
                 self.publish_waypoints(closest_waypoint_idx)
-                rospy.loginfo("published to final_waypoint")
-            else:
-                rospy.logwarn("failed to find pose or basewaypoint in waypoint updater")
+                # rospy.loginfo("published to final_waypoint")
+            # else:
+            #     rospy.logwarn("failed to find pose or basewaypoint in waypoint updater")
             rate.sleep()
 
     def get_closest_waypoint_idx(self):
@@ -90,12 +90,12 @@ class WaypointUpdater(object):
 
     def pose_cb(self, msg):
         # TODO: Implement
-        rospy.loginfo("updated pose in waypoint updater: %s", msg)
+        # rospy.loginfo("updated pose in waypoint updater: %s", msg)
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
-        rospy.loginfo('updated in waypoints_cb')
+        # rospy.loginfo('updated in waypoints_cb')
         self.base_waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
